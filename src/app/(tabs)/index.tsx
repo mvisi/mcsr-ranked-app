@@ -2,16 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { FlatList, RefreshControl, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PlayerSearch } from '@/components/player-search';
-import {
-  BrandHeader,
-  PlayerRow,
-  QueryState,
-  Segments,
-  Select,
-  Txt,
-} from '@/components/ui';
+import { PlayerRow, QueryState, Segments, Select, Txt } from '@/components/ui';
 import { ranked } from '@/lib/api';
 import { dateTime, duration, flag } from '@/lib/format';
 import { SeasonSelect, useSeason } from '@/lib/season';
@@ -107,8 +101,10 @@ export default function StatsScreen() {
   };
 
   return (
-    <View className="flex-1 bg-ranked-background">
-      <BrandHeader title="Stats & leaderboards" />
+    <SafeAreaView
+      edges={['top', 'left', 'right']}
+      className="flex-1 bg-ranked-background"
+    >
       <FlatList
         data={error && !active.data ? [] : rows}
         keyExtractor={(row) => row.key}
@@ -228,6 +224,6 @@ export default function StatsScreen() {
           />
         )}
       />
-    </View>
+    </SafeAreaView>
   );
 }

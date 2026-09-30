@@ -1,28 +1,15 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { ScrollView, View } from 'react-native';
+import { ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import {
-  BrandHeader,
-  Card,
-  ExternalButton,
-  Heading,
-  Txt,
-} from '@/components/ui';
+import { Card, ExternalButton, Heading, Txt } from '@/components/ui';
 
 export default function PlayoffsScreen() {
   return (
-    <View className="flex-1 bg-ranked-background">
-      <BrandHeader title="Season playoffs" />
+    <SafeAreaView
+      edges={['top', 'left', 'right']}
+      className="flex-1 bg-ranked-background"
+    >
       <ScrollView contentContainerClassName="gap-5 p-4 pb-8">
-        <View className="items-center gap-4 rounded-md bg-ranked-green px-5 py-8">
-          <Ionicons name="trophy" size={48} color="#facc15" />
-          <Txt accessibilityRole="header" className="text-center text-2xl">
-            MCSR Ranked Playoffs
-          </Txt>
-          <Txt className="text-center text-sm">
-            Watch the season's best players compete.
-          </Txt>
-        </View>
         <Card className="gap-4">
           <Heading>Brackets & results</Heading>
           <Txt className="text-sm text-ranked-muted">
@@ -51,6 +38,6 @@ export default function PlayoffsScreen() {
           icon="logo-discord"
         />
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }

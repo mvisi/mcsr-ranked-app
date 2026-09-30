@@ -107,27 +107,6 @@ export function Heading({ children }: { children: ReactNode }) {
   );
 }
 
-export function BrandHeader({ title }: { title: string }) {
-  return (
-    <SafeAreaView
-      edges={['top', 'left', 'right']}
-      className="border-b border-ranked-border bg-ranked-surface"
-    >
-      <View className="flex-row items-center gap-3 px-4 py-3">
-        <Image
-          source={require('../../assets/images/ranked.png')}
-          className="h-8 w-8"
-          accessibilityIgnoresInvertColors
-        />
-        <View className="flex-1">
-          <Txt className="font-minecraft-bold text-lg">MCSR Ranked</Txt>
-          <Txt className="mt-1 text-xs text-ranked-muted">{title}</Txt>
-        </View>
-      </View>
-    </SafeAreaView>
-  );
-}
-
 export function QueryState({
   pending,
   error,
