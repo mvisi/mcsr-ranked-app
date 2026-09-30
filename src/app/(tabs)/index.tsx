@@ -135,12 +135,24 @@ export default function StatsScreen() {
               </Txt>
             )}
             <PlayerSearch />
-            <Button
-              secondary
-              title="Compare players"
-              icon="git-compare-outline"
-              onPress={() => router.push('/compare')}
-            />
+            <View className="flex-row gap-2">
+              <View className="flex-1">
+                <Button
+                  secondary
+                  title="Compare"
+                  icon="git-compare-outline"
+                  onPress={() => router.push('/compare')}
+                />
+              </View>
+              <View className="flex-1">
+                <Button
+                  secondary
+                  title="Weekly race"
+                  icon="calendar-outline"
+                  onPress={() => router.push('/weekly-race')}
+                />
+              </View>
+            </View>
             <Segments
               value={board}
               onChange={setBoard}
