@@ -35,6 +35,13 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "e240ec09-1f83-496a-ad18-85def62356a0"
+      }
+    },
+    "owner": "visar-mullaj"
   }
 }
