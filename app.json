@@ -1,42 +1,39 @@
 {
   "expo": {
-    "name": "mcsr-ranked-app",
+    "name": "MCSR Ranked",
     "slug": "mcsr-ranked-app",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "mcsrrankedapp",
-    "userInterfaceStyle": "automatic",
-    "ios": {
-      "icon": "./assets/expo.icon"
-    },
+    "version": "0.1.0",
+    "orientation": "default",
+    "icon": "./assets/images/ranked.png",
+    "scheme": "mcsrranked",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#18181b",
     "android": {
+      "package": "com.mcsrranked.app",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+        "foregroundImage": "./assets/images/ranked.png",
+        "backgroundColor": "#18181b"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": true
     },
     "web": {
+      "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/ranked.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#208AEF",
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 76
+          "backgroundColor": "#18181b",
+          "image": "./assets/images/ranked.png",
+          "imageWidth": 96
         }
       ]
     ],
     "experiments": {
-      "typedRoutes": true,
-      "reactCompiler": true
+      "typedRoutes": true
     }
   }
 }
