@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { router, Stack, useLocalSearchParams } from 'expo-router';
 import type { MatchSort } from 'mcsrranked-sdk';
 import { useState } from 'react';
 import { FlatList, Pressable, RefreshControl, View } from 'react-native';
@@ -104,6 +104,17 @@ export default function PlayerScreen() {
                     Peak Elo {user.seasonResult.highest ?? '–'} ·{' '}
                     {user.seasonResult.last?.phasePoint ?? 0} phase points
                   </Txt>
+                  <Button
+                    secondary
+                    title="Compare with another player"
+                    icon="git-compare-outline"
+                    onPress={() =>
+                      router.push({
+                        pathname: '/compare',
+                        params: { first: user.nickname },
+                      })
+                    }
+                  />
                 </Card>
                 <Card>
                   <Heading>Season {season} · Ranked</Heading>

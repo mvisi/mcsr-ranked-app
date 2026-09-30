@@ -5,7 +5,14 @@ import { FlatList, RefreshControl, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PlayerSearch } from '@/components/player-search';
-import { PlayerRow, QueryState, Segments, Select, Txt } from '@/components/ui';
+import {
+  Button,
+  PlayerRow,
+  QueryState,
+  Segments,
+  Select,
+  Txt,
+} from '@/components/ui';
 import { ranked } from '@/lib/api';
 import { dateTime, duration, flag } from '@/lib/format';
 import { SeasonSelect, useSeason } from '@/lib/season';
@@ -128,6 +135,12 @@ export default function StatsScreen() {
               </Txt>
             )}
             <PlayerSearch />
+            <Button
+              secondary
+              title="Compare players"
+              icon="git-compare-outline"
+              onPress={() => router.push('/compare')}
+            />
             <Segments
               value={board}
               onChange={setBoard}
