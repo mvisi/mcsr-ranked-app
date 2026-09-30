@@ -159,7 +159,7 @@ export default function CompareScreen() {
                 onPress={compare}
                 disabled={!valid}
               />
-              {first.trim() &&
+              {!!first.trim() &&
                 first.trim().toLowerCase() === second.trim().toLowerCase() && (
                   <Txt className="text-xs text-yellow-300">
                     Choose two different players.

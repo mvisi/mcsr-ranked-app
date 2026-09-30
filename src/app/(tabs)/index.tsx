@@ -14,8 +14,10 @@ import {
   Txt,
 } from '@/components/ui';
 import { ranked } from '@/lib/api';
-import { dateTime, duration, flag } from '@/lib/format';
+import { dateTime, duration } from '@/lib/format';
+import { countryOptions } from '@/lib/countries';
 import { SeasonSelect, useSeason } from '@/lib/season';
+import { useClock } from '@/lib/use-clock';
 
 type Board = 'elo' | 'records' | 'points';
 type Row = {
@@ -33,6 +35,7 @@ type Row = {
 };
 
 export default function StatsScreen() {
+  const now = useClock();
   const { season, current } = useSeason();
   const [board, setBoard] = useState<Board>('elo');
   const [country, setCountry] = useState('world');
@@ -68,15 +71,9 @@ export default function StatsScreen() {
     enabled: board === 'points' && season != null,
   });
   const active = board === 'elo' ? elo : board === 'records' ? records : points;
-  const countries = [
-    ...new Set(
-      current.data?.users
-        .map((user) => user.country)
-        .filter((code): code is string => !!code),
-    ),
-  ].sort();
-  if (country !== 'world' && !countries.includes(country))
-    countries.push(country);
+  const endsAt = elo.data
+    ? elo.data.season.endsAt
+    : current.data?.season.endsAt;
   const rows: Row[] =
     board === 'elo'
       ? (elo.data?.users ?? []).map((player) => ({
@@ -115,6 +112,8 @@ export default function StatsScreen() {
       <FlatList
         data={error && !active.data ? [] : rows}
         keyExtractor={(row) => row.key}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
         refreshControl={
           <RefreshControl
             refreshing={active.isRefetching || current.isRefetching}
@@ -128,10 +127,8 @@ export default function StatsScreen() {
             <SeasonSelect />
             {board === 'elo' && (
               <Txt className="text-xs text-ranked-muted">
-                Ends{' '}
-                {dateTime(
-                  elo.data?.season.endsAt ?? current.data?.season.endsAt,
-                )}
+                {endsAt != null && endsAt * 1000 <= now ? 'Ended' : 'Ends'}{' '}
+                {dateTime(endsAt)}
               </Txt>
             )}
             <PlayerSearch />
@@ -186,13 +183,7 @@ export default function StatsScreen() {
                 title="Country"
                 value={country}
                 onChange={setCountry}
-                options={[
-                  { label: '🌐 World', value: 'world' },
-                  ...countries.map((code) => ({
-                    label: `${flag(code)} ${code.toUpperCase()}`,
-                    value: code,
-                  })),
-                ]}
+                options={countryOptions}
               />
             )}
             {board === 'points' && (

@@ -21,8 +21,10 @@ import { uniqueMatches, useMatches } from '@/lib/matches';
 import { ranked } from '@/lib/api';
 import { duration, flag, percentage, rankTier } from '@/lib/format';
 import { SeasonSelect, useSeason } from '@/lib/season';
+import { useClock } from '@/lib/use-clock';
 
 export default function PlayerScreen() {
+  const now = useClock();
   const { name } = useLocalSearchParams<{ name: string }>();
   const { season, current, setSelected } = useSeason();
   const [type, setType] = useState('2');
@@ -292,7 +294,7 @@ export default function PlayerScreen() {
                     {stats?.wins.ranked ?? 0}W {stats?.loses.ranked ?? 0}L
                     {user.timestamp.nextDecay &&
                     season === current.data?.season.number
-                      ? ` · Decay in ${Math.max(0, Math.ceil((user.timestamp.nextDecay - Date.now() / 1000) / 3600))}h`
+                      ? ` · Decay in ${Math.max(0, Math.ceil((user.timestamp.nextDecay - now / 1000) / 3600))}h`
                       : ''}
                   </Txt>
                 )}

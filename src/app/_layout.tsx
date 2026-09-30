@@ -1,17 +1,20 @@
 import '../global.css';
 
-import { QueryClientProvider } from '@tanstack/react-query';
+import { focusManager, QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 import { DarkTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
+import { AppState, Platform } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { queryClient } from '@/lib/query';
 import { SeasonProvider } from '@/lib/season';
 
 void SplashScreen.preventAutoHideAsync();
+
+export const unstable_settings = { initialRouteName: '(tabs)' };
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
@@ -22,6 +25,14 @@ export default function RootLayout() {
   useEffect(() => {
     if (loaded || error) void SplashScreen.hideAsync();
   }, [loaded, error]);
+
+  useEffect(() => {
+    if (Platform.OS === 'web') return;
+    const subscription = AppState.addEventListener('change', (state) => {
+      focusManager.setFocused(state === 'active');
+    });
+    return () => subscription.remove();
+  }, []);
 
   if (!loaded && !error) return null;
 

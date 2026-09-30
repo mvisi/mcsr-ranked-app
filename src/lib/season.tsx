@@ -40,7 +40,9 @@ export function SeasonSelect() {
   return (
     <Select
       title="Season"
-      value={selected == null ? 'current' : String(selected)}
+      value={
+        selected == null || selected === number ? 'current' : String(selected)
+      }
       onChange={(value) =>
         setSelected(value === 'current' ? undefined : Number(value))
       }

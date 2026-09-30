@@ -28,10 +28,12 @@ import {
 } from '@/components/ui';
 import { ranked } from '@/lib/api';
 import { dateTime, duration } from '@/lib/format';
+import { useClock } from '@/lib/use-clock';
 
 type RaceEntry = WeeklyRace['leaderboard'][number];
 
 export default function WeeklyRaceScreen() {
+  const now = useClock();
   const [week, setWeek] = useState<number>();
   const [filter, setFilter] = useState('');
   const [selected, setSelected] = useState<RaceEntry>();
@@ -139,7 +141,7 @@ export default function WeeklyRaceScreen() {
             </View>
             {data && (
               <Txt className="text-xs text-ranked-muted">
-                {data.endsAt * 1000 > Date.now() ? 'Ends' : 'Ended'}{' '}
+                {data.endsAt * 1000 > now ? 'Ends' : 'Ended'}{' '}
                 {dateTime(data.endsAt)} · {data.leaderboard.length} runs
               </Txt>
             )}

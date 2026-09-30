@@ -40,12 +40,7 @@ export function EloChart({
           <Txt className="text-xs text-ranked-muted">{high}</Txt>
           <Txt className="text-xs text-lime-300">{values.at(-1)} Elo</Txt>
         </View>
-        <Svg
-          width="100%"
-          height={140}
-          viewBox="0 0 300 140"
-          accessibilityElementsHidden
-        >
+        <Svg width="100%" height={140} viewBox="0 0 300 140">
           <Line
             x1="8"
             x2="292"

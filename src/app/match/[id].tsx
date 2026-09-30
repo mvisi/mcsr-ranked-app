@@ -140,7 +140,7 @@ export default function MatchScreen() {
                   data.seed?.nether ?? data.bastionType ?? 'Unknown bastion',
                 )}
               </Txt>
-              {data.seed?.id && (
+              {!!data.seed?.id && (
                 <Txt selectable className="text-xs text-ranked-muted">
                   {data.seed.id}
                 </Txt>

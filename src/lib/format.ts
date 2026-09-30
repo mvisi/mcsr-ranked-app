@@ -2,7 +2,12 @@ export function duration(
   milliseconds: number | null | undefined,
   precise = false,
 ) {
-  if (milliseconds == null || !Number.isFinite(milliseconds)) return '–';
+  if (
+    milliseconds == null ||
+    !Number.isFinite(milliseconds) ||
+    milliseconds < 0
+  )
+    return '–';
   const totalSeconds = Math.floor(milliseconds / 1000);
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = String(totalSeconds % 60).padStart(2, '0');
@@ -35,13 +40,24 @@ export function flag(country: string | null | undefined) {
 }
 
 export function rankTier(elo: number | null | undefined) {
-  if (elo == null) return { name: 'Unranked', color: '#a1a1aa' };
-  if (elo >= 2000) return { name: 'Netherite', color: '#c084fc' };
-  if (elo >= 1500) return { name: 'Diamond', color: '#67e8f9' };
-  if (elo >= 1200) return { name: 'Emerald', color: '#4ade80' };
-  if (elo >= 900) return { name: 'Gold', color: '#facc15' };
-  if (elo >= 600) return { name: 'Iron', color: '#e4e4e7' };
-  return { name: 'Coal', color: '#a1a1aa' };
+  if (elo == null) return { name: 'Unrated', color: '#a1a1aa' };
+  const ranks = [
+    { name: 'Coal', tiers: [0, 400, 500], color: '#aaaaaa' },
+    { name: 'Iron', tiers: [600, 700, 800], color: '#ffffff' },
+    { name: 'Gold', tiers: [900, 1000, 1100], color: '#eab308' },
+    { name: 'Emerald', tiers: [1200, 1300, 1400], color: '#21a83b' },
+    { name: 'Diamond', tiers: [1500, 1650, 1800], color: '#2ce0d8' },
+    { name: 'Netherite', tiers: [2000], color: '#d066ff' },
+  ];
+  const rank = ranks.findLast((rank) => Math.max(0, elo) >= rank.tiers[0])!;
+  const tier = rank.tiers.findLastIndex((minimum) => elo >= minimum) + 1;
+  return {
+    name:
+      rank.tiers.length === 1
+        ? rank.name
+        : `${rank.name} ${'I'.repeat(Math.max(1, tier))}`,
+    color: rank.color,
+  };
 }
 
 export function label(value: string) {
@@ -49,5 +65,7 @@ export function label(value: string) {
 }
 
 export function percentage(value: number | null, total: number | null) {
-  return total ? `${(((value ?? 0) / total) * 100).toFixed(1)}%` : '–';
+  return total && value != null
+    ? `${((value / total) * 100).toFixed(1)}%`
+    : '–';
 }

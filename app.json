@@ -10,6 +10,7 @@
     "backgroundColor": "#18181b",
     "android": {
       "package": "com.mcsrranked.app",
+      "softwareKeyboardLayoutMode": "resize",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/ranked.png",
         "backgroundColor": "#18181b"
