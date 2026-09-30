@@ -7,20 +7,20 @@ A native, Android-focused companion for MCSR Ranked. Built with Expo SDK 57, Exp
 Use Node.js 22 LTS or newer.
 
 ```sh
-npm ci
-npm start
+bun install --frozen-lockfile
+bun start
 ```
 
-Scan the QR code with a compatible Expo Go app on an Android phone. The phone and computer should share a network. Use `npx expo start --tunnel` if the local network cannot connect.
+Scan the QR code with a compatible Expo Go app on an Android phone. The phone and computer should share a network. Use `bunx expo start --tunnel` if the local network cannot connect.
 
-`npm run web` provides a browser preview of the same React Native screens. It does not verify Android behavior.
+`bun run web` provides a browser preview of the same React Native screens. It does not verify Android behavior.
 
 ```sh
-npm run typecheck
-npm run lint
+bun run typecheck
+bun run lint
 ```
 
-No Android SDK, emulator, or adb is needed for those checks. `npm run android` is optional and requires Android tools.
+No Android SDK, emulator, or adb is needed for those checks. `bun run android` is optional and requires Android tools.
 
 ## Project
 
