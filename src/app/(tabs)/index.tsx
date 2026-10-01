@@ -234,7 +234,10 @@ export default function StatsScreen() {
             onPress={() =>
               router.push(
                 item.matchId
-                  ? { pathname: '/match/[id]', params: { id: item.matchId } }
+                  ? {
+                      pathname: '/match/[id]',
+                      params: { id: item.matchId, viewer: item.player.uuid },
+                    }
                   : {
                       pathname: '/player/[name]',
                       params: { name: item.player.nickname },

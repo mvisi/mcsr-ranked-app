@@ -9,28 +9,50 @@ import { outcome, signed } from '@/lib/matches';
 
 export function MatchRow({ match, viewer }: { match: Match; viewer?: string }) {
   const opponent = match.players.find((player) => player.uuid !== viewer);
+  const singleplayer = match.players.length === 1;
+  const avatar = singleplayer ? match.players[0] : opponent;
+  const title = match.decayed
+    ? 'Rank decay'
+    : singleplayer
+      ? 'Singleplayer'
+      : viewer
+        ? `vs ${opponent?.nickname ?? 'Unknown'}`
+        : match.players
+            .slice(0, 2)
+            .map((player) => player.nickname)
+            .join(' vs ');
+  const others = match.players.length - 2;
+  const othersLabel =
+    !match.decayed && others > 0
+      ? `(+${others} ${others === 1 ? 'other' : 'others'})`
+      : '';
   const result = outcome(match, viewer);
   const change = match.changes.find((entry) => entry.uuid === viewer);
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityState={{ disabled: match.decayed }}
-      accessibilityLabel={`${opponent?.nickname ?? 'Match'}, ${result.title}, ${match.forfeited ? 'forfeit' : duration(match.result.time)}`}
+      accessibilityLabel={`${title} ${othersLabel}, ${result.title}, ${match.forfeited ? 'forfeit' : duration(match.result.time)}`}
       disabled={match.decayed}
       onPress={() =>
-        router.push({ pathname: '/match/[id]', params: { id: match.id } })
+        router.push({
+          pathname: '/match/[id]',
+          params: { id: match.id, ...(viewer ? { viewer } : {}) },
+        })
       }
       className="min-h-20 flex-row items-center gap-3 border-b border-zinc-800 px-4 py-3 active:bg-ranked-surface"
     >
-      {opponent && <Avatar uuid={opponent.uuid} />}
-      <View className="flex-1 gap-2">
-        <Txt className="text-sm" numberOfLines={1}>
-          {match.decayed
-            ? 'Rank decay'
-            : viewer
-              ? `vs ${opponent?.nickname ?? 'Unknown'}`
-              : match.players.map((player) => player.nickname).join(' vs ')}
-        </Txt>
+      {avatar && <Avatar uuid={avatar.uuid} />}
+      <View className="min-w-0 flex-1 gap-2">
+        <View className="flex-row items-center gap-1">
+          <Txt
+            className={`shrink text-sm ${singleplayer && !match.decayed ? 'text-ranked-muted' : ''}`}
+            numberOfLines={1}
+          >
+            {title}
+          </Txt>
+          {!!othersLabel && <Txt className="text-sm">{othersLabel}</Txt>}
+        </View>
         <Txt className="text-xs text-zinc-500">{dateTime(match.date)}</Txt>
       </View>
       <View className="items-end gap-2">
