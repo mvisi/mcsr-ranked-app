@@ -29,6 +29,24 @@ export function dateTime(seconds: number | null | undefined) {
   });
 }
 
+export function matchDate(seconds: number | null | undefined) {
+  if (seconds == null) return dateTime(seconds);
+  const elapsed = Math.floor((Date.now() - seconds * 1000) / 1000);
+  if (!Number.isFinite(elapsed) || elapsed < 0 || elapsed >= 7 * 86400)
+    return dateTime(seconds);
+
+  const unit =
+    elapsed >= 86400
+      ? { name: 'day', seconds: 86400 }
+      : elapsed >= 3600
+        ? { name: 'hour', seconds: 3600 }
+        : elapsed >= 60
+          ? { name: 'minute', seconds: 60 }
+          : { name: 'second', seconds: 1 };
+  const amount = Math.floor(elapsed / unit.seconds);
+  return `${amount} ${unit.name}${amount === 1 ? '' : 's'} ago`;
+}
+
 export function flag(country: string | null | undefined) {
   if (!country || !/^[a-z]{2}$/i.test(country)) return '🌐';
   return String.fromCodePoint(

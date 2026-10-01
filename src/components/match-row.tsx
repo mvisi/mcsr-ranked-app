@@ -4,7 +4,7 @@ import type { Match } from 'mcsrranked-sdk';
 import { Pressable, View } from 'react-native';
 
 import { Avatar, Button, QueryState, Txt } from '@/components/ui';
-import { dateTime, duration } from '@/lib/format';
+import { duration, matchDate } from '@/lib/format';
 import { outcome, signed } from '@/lib/matches';
 
 export function MatchRow({ match, viewer }: { match: Match; viewer?: string }) {
@@ -53,7 +53,7 @@ export function MatchRow({ match, viewer }: { match: Match; viewer?: string }) {
           </Txt>
           {!!othersLabel && <Txt className="text-sm">{othersLabel}</Txt>}
         </View>
-        <Txt className="text-xs text-zinc-500">{dateTime(match.date)}</Txt>
+        <Txt className="text-xs text-zinc-500">{matchDate(match.date)}</Txt>
       </View>
       <View className="items-end gap-2">
         <Txt className="text-xs" style={{ color: result.color }}>
