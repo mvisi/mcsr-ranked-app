@@ -17,7 +17,6 @@ import {
   Avatar,
   Button,
   Card,
-  ExternalButton,
   Heading,
   Input,
   PlayerRow,
@@ -263,12 +262,6 @@ export default function WeeklyRaceScreen() {
                     });
                   }}
                 />
-                {selected.replayExist && (
-                  <ExternalButton
-                    title="Watch replay on the website"
-                    url={`https://mcsrranked.com/stats/weekly-race/${selected.player.uuid}?week=${data.id}`}
-                  />
-                )}
                 <Button
                   title="Close"
                   secondary
