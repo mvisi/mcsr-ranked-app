@@ -59,6 +59,12 @@ export default function CompareScreen() {
   const rows = uniqueMatches(matches.data?.pages);
   const result = versus.data?.results[type === '2' ? 'ranked' : 'casual'];
   const players = versus.data?.players ?? [];
+  // The versus response may order players differently than the entered names.
+  const [leftUser, rightUser] = players.map((player) =>
+    [firstUser.data, secondUser.data].find(
+      (user) => user?.uuid === player.uuid,
+    ),
+  );
   const firstWins = result?.[players[0]?.uuid] ?? 0;
   const secondWins = result?.[players[1]?.uuid] ?? 0;
   const played = result?.total ?? 0;
@@ -84,29 +90,29 @@ export default function CompareScreen() {
   const comparison = [
     {
       title: 'Personal best',
-      left: duration(firstUser.data?.statistics.season.bestTime.ranked),
-      right: duration(secondUser.data?.statistics.season.bestTime.ranked),
+      left: duration(leftUser?.statistics.season.bestTime.ranked),
+      right: duration(rightUser?.statistics.season.bestTime.ranked),
     },
     {
       title: 'Win rate',
       left: percentage(
-        firstUser.data?.statistics.season.wins.ranked ?? null,
-        firstUser.data?.statistics.season.playedMatches.ranked ?? null,
+        leftUser?.statistics.season.wins.ranked ?? null,
+        leftUser?.statistics.season.playedMatches.ranked ?? null,
       ),
       right: percentage(
-        secondUser.data?.statistics.season.wins.ranked ?? null,
-        secondUser.data?.statistics.season.playedMatches.ranked ?? null,
+        rightUser?.statistics.season.wins.ranked ?? null,
+        rightUser?.statistics.season.playedMatches.ranked ?? null,
       ),
     },
     {
       title: 'Peak Elo',
-      left: firstUser.data?.seasonResult.highest ?? '–',
-      right: secondUser.data?.seasonResult.highest ?? '–',
+      left: leftUser?.seasonResult.highest ?? '–',
+      right: rightUser?.seasonResult.highest ?? '–',
     },
     {
       title: 'Best win streak',
-      left: firstUser.data?.statistics.season.highestWinStreak.ranked ?? '–',
-      right: secondUser.data?.statistics.season.highestWinStreak.ranked ?? '–',
+      left: leftUser?.statistics.season.highestWinStreak.ranked ?? '–',
+      right: rightUser?.statistics.season.highestWinStreak.ranked ?? '–',
     },
   ];
 
@@ -263,8 +269,8 @@ export default function CompareScreen() {
                       error={firstUser.error ?? secondUser.error}
                       retry={refresh}
                     />
-                    {firstUser.data &&
-                      secondUser.data &&
+                    {leftUser &&
+                      rightUser &&
                       comparison.map((row) => (
                         <View
                           key={row.title}
