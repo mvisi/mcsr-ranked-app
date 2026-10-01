@@ -57,17 +57,18 @@ export function flag(country: string | null | undefined) {
   );
 }
 
+export const RANKS = [
+  { name: 'Coal', tiers: [0, 400, 500], color: '#aaaaaa' },
+  { name: 'Iron', tiers: [600, 700, 800], color: '#ffffff' },
+  { name: 'Gold', tiers: [900, 1000, 1100], color: '#eab308' },
+  { name: 'Emerald', tiers: [1200, 1300, 1400], color: '#21a83b' },
+  { name: 'Diamond', tiers: [1500, 1650, 1800], color: '#2ce0d8' },
+  { name: 'Netherite', tiers: [2000], color: '#d066ff' },
+];
+
 export function rankTier(elo: number | null | undefined) {
   if (elo == null) return { name: 'Unrated', color: '#a1a1aa' };
-  const ranks = [
-    { name: 'Coal', tiers: [0, 400, 500], color: '#aaaaaa' },
-    { name: 'Iron', tiers: [600, 700, 800], color: '#ffffff' },
-    { name: 'Gold', tiers: [900, 1000, 1100], color: '#eab308' },
-    { name: 'Emerald', tiers: [1200, 1300, 1400], color: '#21a83b' },
-    { name: 'Diamond', tiers: [1500, 1650, 1800], color: '#2ce0d8' },
-    { name: 'Netherite', tiers: [2000], color: '#d066ff' },
-  ];
-  const rank = ranks.findLast((rank) => Math.max(0, elo) >= rank.tiers[0])!;
+  const rank = RANKS.findLast((rank) => Math.max(0, elo) >= rank.tiers[0])!;
   const tier = rank.tiers.findLastIndex((minimum) => elo >= minimum) + 1;
   return {
     name:
