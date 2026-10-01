@@ -295,9 +295,13 @@ export function Avatar({ uuid, size = 32 }: { uuid: string; size?: number }) {
   return (
     <Image
       accessibilityLabel="Player skin"
-      source={{
-        uri: `https://mc-heads.net/avatar/${encodeURIComponent(uuid)}/${size * 2}`,
-      }}
+      source={[
+        {
+          uri: `https://vzge.me/face/${size * 2}/${encodeURIComponent(uuid)}.png`,
+          // Android forwards these headers only when source is an array.
+          headers: { 'User-Agent': 'MCSRRankedMobile/0.1.0' },
+        },
+      ]}
       style={{ width: size, height: size }}
       className="rounded bg-zinc-700"
     />
