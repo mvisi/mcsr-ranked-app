@@ -10,6 +10,7 @@ import {
   Button,
   Card,
   Heading,
+  IconButton,
   QueryState,
   Select,
   Stat,
@@ -100,22 +101,21 @@ export default function PlayerScreen() {
                         {rank.name} · {displayElo ?? '–'} Elo
                       </Txt>
                     </View>
+                    <IconButton
+                      label="Compare with another player"
+                      icon="git-compare-outline"
+                      onPress={() =>
+                        router.push({
+                          pathname: '/compare',
+                          params: { first: user.nickname },
+                        })
+                      }
+                    />
                   </View>
                   <Txt className="text-xs text-ranked-muted">
                     Peak Elo {user.seasonResult.highest ?? '–'} ·{' '}
                     {user.seasonResult.last?.phasePoint ?? 0} phase points
                   </Txt>
-                  <Button
-                    secondary
-                    title="Compare with another player"
-                    icon="git-compare-outline"
-                    onPress={() =>
-                      router.push({
-                        pathname: '/compare',
-                        params: { first: user.nickname },
-                      })
-                    }
-                  />
                 </Card>
                 <Card>
                   <Heading>Season {season} · Ranked</Heading>

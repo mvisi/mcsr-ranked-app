@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PlayerSearch } from '@/components/player-search';
 import {
-  Button,
+  IconButton,
   PlayerRow,
   QueryState,
   Segments,
@@ -132,51 +132,46 @@ export default function StatsScreen() {
               </Txt>
             )}
             <PlayerSearch />
-            <View className="flex-row gap-2">
+            <View className="flex-row items-center gap-2">
               <View className="flex-1">
-                <Button
-                  secondary
-                  title="Compare"
-                  icon="git-compare-outline"
-                  onPress={() => router.push('/compare')}
+                <Segments
+                  value={board}
+                  onChange={setBoard}
+                  options={[
+                    { label: 'Elo', value: 'elo' },
+                    { label: 'Times', value: 'records' },
+                    { label: 'Points', value: 'points' },
+                  ]}
                 />
               </View>
-              <View className="flex-1">
-                <Button
-                  secondary
-                  title="Weekly race"
-                  icon="calendar-outline"
-                  onPress={() => router.push('/weekly-race')}
-                />
-              </View>
+              <IconButton
+                label="Compare players"
+                icon="git-compare-outline"
+                onPress={() => router.push('/compare')}
+              />
             </View>
-            <Segments
-              value={board}
-              onChange={setBoard}
-              options={[
-                { label: 'Elo', value: 'elo' },
-                { label: 'Fastest times', value: 'records' },
-                { label: 'Points', value: 'points' },
-              ]}
-            />
             {board === 'records' ? (
-              <View className="gap-2">
-                <Segments
-                  value={allTime ? 'all' : 'season'}
-                  onChange={(value) => setAllTime(value === 'all')}
-                  options={[
-                    { label: 'This season', value: 'season' },
-                    { label: 'All time', value: 'all' },
-                  ]}
-                />
-                <Segments
-                  value={distinct ? 'unique' : 'all'}
-                  onChange={(value) => setDistinct(value === 'unique')}
-                  options={[
-                    { label: 'Unique players', value: 'unique' },
-                    { label: 'All runs', value: 'all' },
-                  ]}
-                />
+              <View className="flex-row gap-2">
+                <View className="flex-1">
+                  <Segments
+                    value={allTime ? 'all' : 'season'}
+                    onChange={(value) => setAllTime(value === 'all')}
+                    options={[
+                      { label: 'Season', value: 'season' },
+                      { label: 'All time', value: 'all' },
+                    ]}
+                  />
+                </View>
+                <View className="flex-1">
+                  <Segments
+                    value={distinct ? 'unique' : 'all'}
+                    onChange={(value) => setDistinct(value === 'unique')}
+                    options={[
+                      { label: 'Unique', value: 'unique' },
+                      { label: 'All runs', value: 'all' },
+                    ]}
+                  />
+                </View>
               </View>
             ) : (
               <Select

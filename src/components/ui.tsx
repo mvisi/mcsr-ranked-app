@@ -5,6 +5,7 @@ import {
   ActivityIndicator,
   FlatList,
   Image,
+  Keyboard,
   Linking,
   Modal,
   Pressable,
@@ -16,6 +17,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { twMerge } from 'tailwind-merge';
 
 import { flag, rankTier } from '@/lib/format';
+import { KeyboardSheet } from '@/components/keyboard-sheet';
 
 export function Txt({ className, ...props }: ComponentProps<typeof Text>) {
   return (
@@ -73,6 +75,27 @@ export function Button({
     >
       {icon && <Ionicons name={icon} size={18} color="#fafafa" />}
       <Txt className="text-sm">{title}</Txt>
+    </Pressable>
+  );
+}
+
+export function IconButton({
+  label,
+  icon,
+  onPress,
+}: {
+  label: string;
+  icon: ComponentProps<typeof Ionicons>['name'];
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      onPress={onPress}
+      className="h-12 w-12 items-center justify-center rounded-md border border-ranked-border bg-ranked-surface active:opacity-70"
+    >
+      <Ionicons name={icon} size={22} color="#fafafa" />
     </Pressable>
   );
 }
@@ -166,6 +189,7 @@ export function Select({
   const [filter, setFilter] = useState('');
   const chosen = options.find((option) => option.value === value);
   const close = () => {
+    Keyboard.dismiss();
     setOpen(false);
     setFilter('');
   };
@@ -181,76 +205,80 @@ export function Select({
         <Txt className="shrink text-sm">{chosen?.label ?? value}</Txt>
         <Ionicons name="chevron-down" size={16} color="#a1a1aa" />
       </Pressable>
-      <Modal
-        visible={open}
-        transparent
-        animationType="slide"
-        onRequestClose={close}
-      >
-        <View className="flex-1 justify-end bg-black/70">
-          <Pressable
-            accessibilityLabel="Close selector"
-            accessibilityRole="button"
-            onPress={close}
-            className="flex-1"
-          />
-          <SafeAreaView
-            edges={['bottom', 'left', 'right']}
-            className="max-h-[80%] rounded-t-xl border border-ranked-border bg-ranked-background p-4"
-          >
-            <View className="mb-3 flex-row items-center justify-between">
-              <Txt accessibilityRole="header" className="text-xl">
-                {title}
-              </Txt>
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel="Close selector"
-                onPress={close}
-                className="h-12 w-12 items-center justify-center"
-              >
-                <Ionicons name="close" size={24} color="#fafafa" />
-              </Pressable>
-            </View>
-            {options.length > 12 && (
-              <Input
-                accessibilityLabel={`Filter ${title.toLowerCase()}`}
-                placeholder="Filter options"
-                value={filter}
-                onChangeText={setFilter}
-                className="mb-3"
-              />
-            )}
-            <FlatList
-              keyboardShouldPersistTaps="handled"
-              data={options.filter((option) =>
-                `${option.label} ${option.value}`
-                  .toLowerCase()
-                  .includes(filter.toLowerCase()),
-              )}
-              keyExtractor={(option) => option.value}
-              ListEmptyComponent={<QueryState empty="No matching options." />}
-              renderItem={({ item }) => (
-                <Pressable
-                  accessibilityRole="radio"
-                  accessibilityState={{ checked: item.value === value }}
-                  onPress={() => {
-                    onChange(item.value);
-                    close();
-                  }}
-                  className="min-h-12 flex-row items-center justify-between border-b border-zinc-800 px-2 py-3 active:bg-ranked-surface"
-                >
-                  <Txt className={item.value === value ? 'text-lime-300' : ''}>
-                    {item.label}
-                  </Txt>
-                  {item.value === value && (
-                    <Ionicons name="checkmark" color="#a3d65c" size={20} />
-                  )}
-                </Pressable>
-              )}
+      {open && (
+        <Modal
+          visible={open}
+          transparent
+          animationType="slide"
+          onRequestClose={close}
+        >
+          <KeyboardSheet>
+            <Pressable
+              accessibilityLabel="Close selector"
+              accessibilityRole="button"
+              onPress={close}
+              className="flex-1"
             />
-          </SafeAreaView>
-        </View>
-      </Modal>
+            <SafeAreaView
+              edges={['bottom', 'left', 'right']}
+              className="max-h-[80%] rounded-t-xl border border-ranked-border bg-ranked-background p-4"
+            >
+              <View className="mb-3 flex-row items-center justify-between">
+                <Txt accessibilityRole="header" className="text-xl">
+                  {title}
+                </Txt>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Close selector"
+                  onPress={close}
+                  className="h-12 w-12 items-center justify-center"
+                >
+                  <Ionicons name="close" size={24} color="#fafafa" />
+                </Pressable>
+              </View>
+              {options.length > 12 && (
+                <Input
+                  accessibilityLabel={`Filter ${title.toLowerCase()}`}
+                  placeholder="Filter options"
+                  value={filter}
+                  onChangeText={setFilter}
+                  className="mb-3"
+                />
+              )}
+              <FlatList
+                keyboardShouldPersistTaps="handled"
+                data={options.filter((option) =>
+                  `${option.label} ${option.value}`
+                    .toLowerCase()
+                    .includes(filter.toLowerCase()),
+                )}
+                keyExtractor={(option) => option.value}
+                ListEmptyComponent={<QueryState empty="No matching options." />}
+                renderItem={({ item }) => (
+                  <Pressable
+                    accessibilityRole="radio"
+                    accessibilityState={{ checked: item.value === value }}
+                    onPress={() => {
+                      onChange(item.value);
+                      close();
+                    }}
+                    className="min-h-12 flex-row items-center justify-between border-b border-zinc-800 px-2 py-3 active:bg-ranked-surface"
+                  >
+                    <Txt
+                      className={item.value === value ? 'text-lime-300' : ''}
+                    >
+                      {item.label}
+                    </Txt>
+                    {item.value === value && (
+                      <Ionicons name="checkmark" color="#a3d65c" size={20} />
+                    )}
+                  </Pressable>
+                )}
+              />
+            </SafeAreaView>
+          </KeyboardSheet>
+        </Modal>
+      )}
     </>
   );
 }

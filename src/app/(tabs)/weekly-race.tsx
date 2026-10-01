@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import * as Clipboard from 'expo-clipboard';
-import { router, Stack } from 'expo-router';
+import { router } from 'expo-router';
 import type { WeeklyRace } from 'mcsrranked-sdk';
 import { useState } from 'react';
 import {
@@ -66,10 +66,9 @@ export default function WeeklyRaceScreen() {
 
   return (
     <SafeAreaView
-      edges={['bottom', 'left', 'right']}
+      edges={['top', 'left', 'right']}
       className="flex-1 bg-ranked-background"
     >
-      <Stack.Screen options={{ title: 'Weekly race' }} />
       <FlatList
         data={rows}
         keyExtractor={(entry) => entry.player.uuid}
@@ -93,6 +92,9 @@ export default function WeeklyRaceScreen() {
         )}
         ListHeaderComponent={
           <View className="gap-4 p-4">
+            <Txt accessibilityRole="header" className="text-xl">
+              Weekly race
+            </Txt>
             <Select
               title="Race week"
               value={week == null ? 'current' : String(week)}
