@@ -30,7 +30,6 @@ export default function PlayerScreen() {
   const [type, setType] = useState('2');
   const [sort, setSort] = useState<MatchSort>('newest');
   const [showSeasons, setShowSeasons] = useState(false);
-  const [showAchievements, setShowAchievements] = useState(false);
   const matches = useMatches({ name, season, type: Number(type), sort });
   const rows = uniqueMatches(matches.data?.pages);
   const seasons = useQuery({
@@ -180,40 +179,6 @@ export default function PlayerScreen() {
                     />
                   </View>
                 </Card>
-                <Button
-                  secondary
-                  title={
-                    showAchievements
-                      ? 'Hide achievements'
-                      : `Achievements · ${user.achievements.total.length + user.achievements.display.length}`
-                  }
-                  onPress={() => setShowAchievements(!showAchievements)}
-                />
-                {showAchievements && (
-                  <Card className="gap-4">
-                    <Heading>Achievements</Heading>
-                    {[
-                      ...user.achievements.display,
-                      ...user.achievements.total,
-                    ].map((achievement, index) => (
-                      <View
-                        key={`${achievement.id}-${index}`}
-                        className="gap-2"
-                      >
-                        <Txt className="text-sm">
-                          {achievement.id.replace(/([A-Z])/g, ' $1')} · Level{' '}
-                          {achievement.level}
-                        </Txt>
-                        <Txt className="text-xs text-ranked-muted">
-                          {achievement.data.join(' · ')}
-                          {achievement.value != null
-                            ? ` · ${achievement.value}${achievement.goal != null ? ` / ${achievement.goal}` : ''}`
-                            : ''}
-                        </Txt>
-                      </View>
-                    ))}
-                  </Card>
-                )}
                 <Button
                   secondary
                   title={showSeasons ? 'Hide season history' : 'Season history'}

@@ -27,7 +27,7 @@ No Android SDK, emulator, or adb is needed for those checks. `bun run android` i
 - Elo leaderboards with every country and past seasons.
 - Fastest times with season/all-time and unique-player/all-run filters.
 - Earned and predicted phase points.
-- Player lookup, ranked season and all-time stats, achievements, season history, and recent Elo charts.
+- Player lookup, ranked season and all-time stats, season history, and recent Elo charts.
 - Match history with type/order filters and pagination.
 - Match details with player results, seed information, advancement timelines, and VOD links.
 - Player comparisons with ranked/casual head-to-head scores and shared matches.
