@@ -1,10 +1,10 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { Image } from 'expo-image';
 import { RankedError } from 'mcsrranked-sdk';
 import { useState, type ComponentProps, type ReactNode } from 'react';
 import {
   ActivityIndicator,
   FlatList,
-  Image,
   Keyboard,
   Linking,
   Modal,
@@ -320,18 +320,25 @@ export function Segments<T extends string>({
 }
 
 export function Avatar({ uuid, size = 32 }: { uuid: string; size?: number }) {
+  // Share one resolution across display sizes, with a new cache entry each UTC day.
+  const uri = `https://vzge.me/face/128/${encodeURIComponent(uuid)}.png`;
+  const day = new Date().toISOString().slice(0, 10);
+
   return (
     <Image
       accessibilityLabel="Player skin"
-      source={[
-        {
-          uri: `https://vzge.me/face/${size * 2}/${encodeURIComponent(uuid)}.png`,
-          // Android forwards these headers only when source is an array.
-          headers: { 'User-Agent': 'MCSRRankedMobile/0.1.0' },
-        },
-      ]}
-      style={{ width: size, height: size }}
-      className="rounded bg-zinc-700"
+      source={{
+        uri,
+        cacheKey: `${uri}:${day}`,
+        headers: { 'User-Agent': 'MCSRRankedMobile/0.1.0' },
+      }}
+      cachePolicy="memory-disk"
+      style={{
+        width: size,
+        height: size,
+        borderRadius: 4,
+        backgroundColor: '#3f3f46',
+      }}
     />
   );
 }
