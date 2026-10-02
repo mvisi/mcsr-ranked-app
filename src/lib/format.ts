@@ -79,10 +79,6 @@ export function rankTier(elo: number | null | undefined) {
   };
 }
 
-export function label(value: string) {
-  return value.replace(/^(story|nether|end)\//, '').replace(/[_/]/g, ' ');
-}
-
 export function percentage(value: number | null, total: number | null) {
   return total && value != null
     ? `${((value / total) * 100).toFixed(1)}%`

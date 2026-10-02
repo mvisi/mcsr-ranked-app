@@ -38,6 +38,7 @@ export default function StatsScreen() {
   const now = useClock();
   const { season, current } = useSeason();
   const [board, setBoard] = useState<Board>('elo');
+  const [searchName, setSearchName] = useState('');
   const [country, setCountry] = useState('world');
   const [allTime, setAllTime] = useState(false);
   const [distinct, setDistinct] = useState(true);
@@ -110,6 +111,8 @@ export default function StatsScreen() {
       className="flex-1 bg-ranked-background"
     >
       <FlatList
+        // Restart row batching instead of reusing the previous board's render window.
+        key={board}
         data={error && !active.data ? [] : rows}
         keyExtractor={(row) => row.key}
         keyboardShouldPersistTaps="handled"
@@ -131,7 +134,7 @@ export default function StatsScreen() {
                 {dateTime(endsAt)}
               </Txt>
             )}
-            <PlayerSearch />
+            <PlayerSearch name={searchName} onChangeName={setSearchName} />
             <View className="flex-row items-center gap-2">
               <View className="flex-1">
                 <Segments

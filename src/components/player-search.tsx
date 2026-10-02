@@ -1,12 +1,16 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
-import { useState } from 'react';
 import { Keyboard, Pressable, View } from 'react-native';
 
 import { Input } from '@/components/ui';
 
-export function PlayerSearch() {
-  const [name, setName] = useState('');
+export function PlayerSearch({
+  name,
+  onChangeName,
+}: {
+  name: string;
+  onChangeName: (name: string) => void;
+}) {
   const search = () => {
     if (!name.trim()) return;
     Keyboard.dismiss();
@@ -18,7 +22,7 @@ export function PlayerSearch() {
         accessibilityLabel="Player name"
         placeholder="Search for players"
         value={name}
-        onChangeText={setName}
+        onChangeText={onChangeName}
         onSubmitEditing={search}
         returnKeyType="search"
         className="flex-1"

@@ -56,10 +56,7 @@ const EloPlot = memo(
       width: number;
     } | null>(null);
     const selected =
-      selection?.width === width &&
-      selection.point.result != null &&
-      selection.point.change != null &&
-      points.includes(selection.point)
+      selection?.width === width && points.includes(selection.point)
         ? selection
         : null;
     const tooltipWidth = Math.min(208, Math.max(0, width - 16));
@@ -278,14 +275,14 @@ const EloPlot = memo(
     );
   },
   (previous, next) =>
-    previous.points?.length === next.points.length &&
+    previous.points.length === next.points.length &&
     previous.points.every(
       (point, index) =>
         point.value === next.points[index].value &&
         point.change === next.points[index].change &&
         point.label === next.points[index].label &&
-        point.result?.title === next.points[index].result?.title &&
-        point.result?.color === next.points[index].result?.color,
+        point.result.title === next.points[index].result.title &&
+        point.result.color === next.points[index].result.color,
     ),
 );
 
