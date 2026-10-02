@@ -26,13 +26,7 @@ To get the app running on your device, you can build it yourself, or use expo se
 
 The `preview` profile in [eas.json](eas.json) creates an APK that can be installed directly on an Android phone. [EAS Build](https://docs.expo.dev/build/setup/) builds it in the cloud, so a local Android SDK is not required.
 
-Log in to an Expo account with access to the project:
-
-```sh
-bunx eas-cli login
-```
-
-If you are building a fork, first set `expo.owner` in [app.json](app.json) to your Expo username or organization and remove the existing `expo.extra.eas.projectId`. Run `bunx eas-cli init` to [create or link your own EAS project](https://docs.expo.dev/eas/cli/#eas-init).
+First set `expo.owner` in [app.json](app.json) to your Expo username or organization and remove the existing `expo.extra.eas.projectId`. Run `bunx eas-cli init` to [create or link your own EAS project](https://docs.expo.dev/eas/cli/#eas-init).
 
 Build the APK:
 
