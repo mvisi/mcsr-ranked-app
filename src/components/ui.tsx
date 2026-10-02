@@ -1,7 +1,12 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Image } from 'expo-image';
 import { RankedError } from 'mcsrranked-sdk';
-import { useState, type ComponentProps, type ReactNode } from 'react';
+import {
+  useState,
+  type ComponentProps,
+  type ComponentPropsWithRef,
+  type ReactNode,
+} from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -31,7 +36,7 @@ export function Txt({ className, ...props }: ComponentProps<typeof Text>) {
 export function Input({
   className,
   ...props
-}: ComponentProps<typeof TextInput>) {
+}: ComponentPropsWithRef<typeof TextInput>) {
   return (
     <TextInput
       placeholderTextColor="#71717a"
@@ -170,6 +175,30 @@ export function QueryState({
       </View>
     );
   return null;
+}
+
+export function RefreshWarning({
+  error,
+  retry,
+}: {
+  error: unknown;
+  retry: () => void;
+}) {
+  if (!error) return null;
+  return (
+    <View className="flex-row items-center gap-3 rounded-md border border-ranked-border bg-ranked-surface pl-3">
+      <Txt className="flex-1 text-xs text-ranked-muted">
+        Could not refresh. Showing saved stats.
+      </Txt>
+      <Pressable
+        accessibilityRole="button"
+        onPress={retry}
+        className="min-h-11 justify-center px-3 active:opacity-70"
+      >
+        <Txt className="text-xs text-lime-300">Retry</Txt>
+      </Pressable>
+    </View>
+  );
 }
 
 export type Option = { label: string; value: string };

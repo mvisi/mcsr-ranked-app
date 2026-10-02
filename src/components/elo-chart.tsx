@@ -296,24 +296,27 @@ export function EloChart({
   matches: Match[];
   uuid: string;
 }) {
-  const changes = matches
-    .flatMap((match) => {
-      const change = match.changes.find((change) => change.uuid === uuid);
-      if (change?.eloRate == null || change.change == null) return [];
-      return [
-        { match, end: change.eloRate + change.change, delta: change.change },
-      ];
-    })
-    .reverse();
-  if (changes.length < 2) return null;
-  const points: EloPoint[] = changes.map(({ match, end, delta }) => ({
-    value: end,
-    change: delta,
-    result: outcome(match, uuid),
-    label: match.decayed
-      ? 'Rank decay'
-      : `vs ${match.players.find((player) => player.uuid !== uuid)?.nickname ?? 'Unknown'}`,
-  }));
+  const points = useMemo<EloPoint[]>(
+    () =>
+      matches
+        .flatMap((match) => {
+          const change = match.changes.find((change) => change.uuid === uuid);
+          if (change?.eloRate == null || change.change == null) return [];
+          return [
+            {
+              value: change.eloRate + change.change,
+              change: change.change,
+              result: outcome(match, uuid),
+              label: match.decayed
+                ? 'Rank decay'
+                : `vs ${match.players.find((player) => player.uuid !== uuid)?.nickname ?? 'Unknown'}`,
+            },
+          ];
+        })
+        .reverse(),
+    [matches, uuid],
+  );
+  if (points.length < 2) return null;
   const values = points.map((point) => point.value);
   const latest = values.at(-1)!;
   const net = latest - values[0];
@@ -325,7 +328,7 @@ export function EloChart({
       <View>
         <View
           accessible
-          accessibilityLabel={`Elo over the last ${changes.length} rated matches, from ${values[0]} to ${latest}, ranging from ${Math.min(...values)} to ${Math.max(...values)}`}
+          accessibilityLabel={`Elo over the last ${points.length} rated matches, from ${values[0]} to ${latest}, ranging from ${Math.min(...values)} to ${Math.max(...values)}`}
           className="mb-2 flex-row items-end justify-between gap-3"
         >
           <View className="flex-row items-baseline gap-2">
@@ -342,7 +345,7 @@ export function EloChart({
         <EloPlot points={points} />
         <View className="mt-2 flex-row justify-between">
           <Txt className="text-xs text-ranked-muted">
-            {changes.length - 1} matches ago
+            {points.length - 1} matches ago
           </Txt>
           <Txt className="text-xs text-ranked-muted">Latest</Txt>
         </View>

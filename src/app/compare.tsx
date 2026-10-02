@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
-import { useState } from 'react';
+import { useHeaderHeight } from 'expo-router/react-navigation';
+import { useRef, useState } from 'react';
 import {
   FlatList,
   Keyboard,
@@ -9,6 +10,7 @@ import {
   Pressable,
   RefreshControl,
   View,
+  type TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -20,15 +22,18 @@ import {
   Heading,
   Input,
   QueryState,
+  RefreshWarning,
   Segments,
   Txt,
 } from '@/components/ui';
 import { ranked } from '@/lib/api';
 import { duration, percentage } from '@/lib/format';
-import { uniqueMatches, useMatches } from '@/lib/matches';
+import { useMatches } from '@/lib/matches';
 import { SeasonSelect, useSeason } from '@/lib/season';
 
 export default function CompareScreen() {
+  const headerHeight = useHeaderHeight();
+  const secondInput = useRef<TextInput>(null);
   const params = useLocalSearchParams<{ first?: string }>();
   const { season, current } = useSeason();
   const [first, setFirst] = useState(params.first ?? '');
@@ -56,7 +61,7 @@ export default function CompareScreen() {
     season,
     type: Number(type),
   });
-  const rows = uniqueMatches(matches.data?.pages);
+  const rows = matches.rows;
   const result = versus.data?.results[type === '2' ? 'ranked' : 'casual'];
   const players = versus.data?.players ?? [];
   // The versus response may order players differently than the entered names.
@@ -83,7 +88,7 @@ export default function CompareScreen() {
       void versus.refetch();
       void firstUser.refetch();
       void secondUser.refetch();
-      void matches.refetch();
+      void matches.refresh();
     }
   };
   const error = current.error ?? versus.error;
@@ -124,16 +129,23 @@ export default function CompareScreen() {
       <Stack.Screen options={{ title: 'Compare players' }} />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={headerHeight}
         className="flex-1"
       >
         <FlatList
-          data={versus.data && !error ? rows : []}
+          data={versus.data ? rows : []}
           keyExtractor={(match) => String(match.id)}
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="on-drag"
           refreshControl={
             <RefreshControl
-              refreshing={versus.isRefetching || matches.isRefetching}
+              refreshing={
+                current.isRefetching ||
+                versus.isRefetching ||
+                firstUser.isRefetching ||
+                secondUser.isRefetching ||
+                matches.isRefetching
+              }
               onRefresh={refresh}
               colors={['#70a822']}
               tintColor="#a3d65c"
@@ -151,8 +163,11 @@ export default function CompareScreen() {
                 value={first}
                 onChangeText={setFirst}
                 returnKeyType="next"
+                submitBehavior="submit"
+                onSubmitEditing={() => secondInput.current?.focus()}
               />
               <Input
+                ref={secondInput}
                 accessibilityLabel="Second player"
                 placeholder="Second player name"
                 value={second}
@@ -173,7 +188,7 @@ export default function CompareScreen() {
                 )}
               {!pair ? (
                 <QueryState empty="Enter two player names to compare their stats and head-to-head matches." />
-              ) : !versus.data || error ? (
+              ) : !versus.data ? (
                 <QueryState
                   pending={!error && versus.isPending}
                   error={error}
@@ -181,6 +196,7 @@ export default function CompareScreen() {
                 />
               ) : (
                 <>
+                  <RefreshWarning error={error} retry={refresh} />
                   <Segments
                     value={type}
                     onChange={setType}
@@ -264,11 +280,18 @@ export default function CompareScreen() {
                   </Card>
                   <Card className="gap-4">
                     <Heading>Ranked season stats</Heading>
-                    <QueryState
-                      pending={firstUser.isPending || secondUser.isPending}
-                      error={firstUser.error ?? secondUser.error}
-                      retry={refresh}
-                    />
+                    {leftUser && rightUser ? (
+                      <RefreshWarning
+                        error={firstUser.error ?? secondUser.error}
+                        retry={refresh}
+                      />
+                    ) : (
+                      <QueryState
+                        pending={firstUser.isPending || secondUser.isPending}
+                        error={firstUser.error ?? secondUser.error}
+                        retry={refresh}
+                      />
+                    )}
                     {leftUser &&
                       rightUser &&
                       comparison.map((row) => (
@@ -289,17 +312,25 @@ export default function CompareScreen() {
                       ))}
                   </Card>
                   <Heading>Shared matches</Heading>
+                  {rows.length > 0 && (
+                    <RefreshWarning
+                      error={matches.isRefetchError ? matches.error : null}
+                      retry={() => {
+                        void matches.refresh();
+                      }}
+                    />
+                  )}
                 </>
               )}
             </View>
           }
           ListEmptyComponent={
-            pair && versus.data && !error ? (
+            pair && versus.data ? (
               <QueryState
                 pending={matches.isPending}
                 error={matches.error}
                 retry={() => {
-                  void matches.refetch();
+                  void matches.refresh();
                 }}
                 empty={
                   !matches.isPending && !matches.error
@@ -310,10 +341,10 @@ export default function CompareScreen() {
             ) : null
           }
           ListFooterComponent={
-            pair && versus.data && !error ? (
+            pair && versus.data ? (
               <MatchesFooter
                 hasMore={matches.hasNextPage}
-                loading={matches.isFetchingNextPage}
+                loading={matches.isFetching}
                 error={matches.isFetchNextPageError ? matches.error : null}
                 load={() => {
                   void matches.fetchNextPage();

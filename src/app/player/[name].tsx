@@ -12,13 +12,14 @@ import {
   Heading,
   IconButton,
   QueryState,
+  RefreshWarning,
   Select,
   Stat,
   Txt,
 } from '@/components/ui';
 import { EloChart } from '@/components/elo-chart';
 import { MatchRow, MatchesFooter } from '@/components/match-row';
-import { uniqueMatches, useMatches } from '@/lib/matches';
+import { useMatches } from '@/lib/matches';
 import { ranked } from '@/lib/api';
 import { duration, flag, percentage, rankTier } from '@/lib/format';
 import { SeasonSelect, useSeason } from '@/lib/season';
@@ -32,7 +33,7 @@ export default function PlayerScreen() {
   const [sort, setSort] = useState<MatchSort>('newest');
   const [showSeasons, setShowSeasons] = useState(false);
   const matches = useMatches({ name, season, type: Number(type), sort });
-  const rows = uniqueMatches(matches.data?.pages);
+  const rows = matches.rows;
   const seasons = useQuery({
     queryKey: ['player-seasons', name],
     queryFn: () => ranked.users.seasons(name),
@@ -57,7 +58,7 @@ export default function PlayerScreen() {
   const refresh = () => {
     void current.refetch();
     void player.refetch();
-    void matches.refetch();
+    void matches.refresh();
   };
 
   return (
@@ -67,11 +68,15 @@ export default function PlayerScreen() {
     >
       <Stack.Screen options={{ title: user?.nickname ?? name ?? 'Player' }} />
       <FlatList
-        data={user && !error ? rows : []}
+        data={user ? rows : []}
         keyExtractor={(match) => String(match.id)}
         refreshControl={
           <RefreshControl
-            refreshing={player.isRefetching || matches.isRefetching}
+            refreshing={
+              current.isRefetching ||
+              player.isRefetching ||
+              matches.isRefetching
+            }
             onRefresh={refresh}
             colors={['#70a822']}
             tintColor="#a3d65c"
@@ -81,10 +86,11 @@ export default function PlayerScreen() {
         ListHeaderComponent={
           <View className="gap-4 p-4">
             <SeasonSelect />
-            {error || !user ? (
+            {!user ? (
               <QueryState pending={!error} error={error} retry={refresh} />
             ) : (
               <>
+                <RefreshWarning error={error} retry={refresh} />
                 <Card className="gap-4">
                   <View className="flex-row items-center gap-4">
                     <Avatar uuid={user.uuid} size={64} />
@@ -253,6 +259,14 @@ export default function PlayerScreen() {
                     />
                   </View>
                 </View>
+                {rows.length > 0 && (
+                  <RefreshWarning
+                    error={matches.isRefetchError ? matches.error : null}
+                    retry={() => {
+                      void matches.refresh();
+                    }}
+                  />
+                )}
                 {type === '2' && (
                   <Txt className="text-xs text-ranked-muted">
                     {stats?.playedMatches.ranked ?? 0} matches ·{' '}
@@ -268,12 +282,12 @@ export default function PlayerScreen() {
           </View>
         }
         ListEmptyComponent={
-          user && !error ? (
+          user ? (
             <QueryState
               pending={matches.isPending}
               error={matches.error}
               retry={() => {
-                void matches.refetch();
+                void matches.refresh();
               }}
               empty={
                 !matches.isPending && !matches.error
@@ -284,10 +298,10 @@ export default function PlayerScreen() {
           ) : null
         }
         ListFooterComponent={
-          user && !error ? (
+          user ? (
             <MatchesFooter
               hasMore={matches.hasNextPage}
-              loading={matches.isFetchingNextPage}
+              loading={matches.isFetching}
               error={matches.isFetchNextPageError ? matches.error : null}
               load={() => {
                 void matches.fetchNextPage();
