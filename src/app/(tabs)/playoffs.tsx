@@ -13,8 +13,8 @@ export default function PlayoffsScreen() {
         <Card className="gap-4">
           <Heading>Brackets & results</Heading>
           <Txt className="text-sm text-ranked-muted">
-            Native playoffs are coming when the Ranked SDK supports them. Follow
-            brackets, schedules, and results on the website for now.
+            Coming soon... Follow brackets, schedules, and results on the
+            website for now.
           </Txt>
           <ExternalButton
             title="View playoffs on the website"
