@@ -8,11 +8,14 @@
     "scheme": "mcsrranked",
     "userInterfaceStyle": "dark",
     "backgroundColor": "#18181b",
+    "ios": {
+      "icon": "./assets/images/ranked-ios.png"
+    },
     "android": {
       "package": "com.mcsrranked.app",
       "softwareKeyboardLayoutMode": "resize",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/ranked.png",
+        "foregroundImage": "./assets/images/ranked-android-foreground.png",
         "backgroundColor": "#18181b"
       },
       "predictiveBackGestureEnabled": true
