@@ -20,7 +20,7 @@ Clone or download this repository, open a terminal in its directory, and install
 bun install --frozen-lockfile
 ```
 
-To get the app running on your device, you can build it yourself, or use expo servers. Use the development provile to include the dev tools on the build.
+To get the app running on your device, you can build it yourself, or use expo servers. Use the development profile to include the dev tools on the build.
 
 ## Build an Android APK
 
