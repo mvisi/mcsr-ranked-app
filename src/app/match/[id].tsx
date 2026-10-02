@@ -28,6 +28,13 @@ export default function MatchScreen() {
     enabled: valid,
   });
   const data = match.data;
+  const details = [
+    data?.beginner ? 'Beginner mode' : null,
+    data?.rank.allTime ? `All-time #${data.rank.allTime}` : null,
+    data?.rank.season ? `Season #${data.rank.season}` : null,
+  ]
+    .filter(Boolean)
+    .join(' · ');
   const refresh = () => {
     void match.refetch();
   };
@@ -75,12 +82,9 @@ export default function MatchScreen() {
                 nether={data.seed?.nether ?? data.bastionType}
               />
               <MatchTimeline match={data} viewer={viewer} />
-              <Txt className="text-xs text-ranked-muted">
-                {data.category ?? 'Any%'}
-                {data.beginner ? ' · Beginner mode' : ''}
-                {data.rank.allTime ? ` · All-time #${data.rank.allTime}` : ''}
-                {data.rank.season ? ` · Season #${data.rank.season}` : ''}
-              </Txt>
+              {details && (
+                <Txt className="text-xs text-ranked-muted">{details}</Txt>
+              )}
             </Card>
             {!!data.vod?.length && <Heading>Match VODs</Heading>}
             {data.vod?.map((vod) => {
