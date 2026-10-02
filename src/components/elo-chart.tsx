@@ -221,7 +221,7 @@ const EloPlot = memo(
           onPress={({ nativeEvent }) => selectAt(nativeEvent.locationX)}
           style={{ height: CHART_HEIGHT }}
         >
-          <View pointerEvents="none">
+          <View style={{ pointerEvents: 'none' }}>
             {width > 0 && (
               <SvgChart
                 ref={host}
@@ -233,11 +233,14 @@ const EloPlot = memo(
         </Pressable>
         {selected && (
           <View
-            pointerEvents="none"
             accessible
             accessibilityLabel={`${selected.point.value} Elo, ${signed(selected.point.change)} Elo change, ${selected.point.result.title}, ${selected.point.label}`}
             className="absolute top-2 gap-2 rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2.5"
-            style={{ left: tooltipLeft, width: tooltipWidth }}
+            style={{
+              left: tooltipLeft,
+              width: tooltipWidth,
+              pointerEvents: 'none',
+            }}
           >
             <View className="flex-row items-baseline justify-between gap-2">
               <View className="flex-row items-baseline gap-1">

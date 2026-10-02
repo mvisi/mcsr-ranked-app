@@ -82,7 +82,7 @@ export default function MatchScreen() {
                 nether={data.seed?.nether ?? data.bastionType}
               />
               <MatchTimeline match={data} viewer={viewer} />
-              {details && (
+              {details.length > 0 && (
                 <Txt className="text-xs text-ranked-muted">{details}</Txt>
               )}
             </Card>
