@@ -128,12 +128,10 @@ export default function StatsScreen() {
         ListHeaderComponent={
           <View className="gap-4 p-4 pb-2">
             <SeasonSelect />
-            {board === 'elo' && (
-              <Txt className="text-xs text-ranked-muted">
-                {endsAt != null && endsAt * 1000 <= now ? 'Ended' : 'Ends'}{' '}
-                {dateTime(endsAt)}
-              </Txt>
-            )}
+            <Txt className="text-xs text-ranked-muted">
+              {endsAt != null && endsAt * 1000 <= now ? 'Ended' : 'Ends'}{' '}
+              {dateTime(endsAt)}
+            </Txt>
             <PlayerSearch name={searchName} onChangeName={setSearchName} />
             <View className="flex-row items-center gap-2">
               <View className="flex-1">
