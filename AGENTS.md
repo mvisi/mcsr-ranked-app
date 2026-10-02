@@ -10,15 +10,15 @@ Expo ships breaking changes every SDK release. APIs you remember are likely rena
 
 ## Commands
 
-Use `bunx` instead of `npx` if the project uses bun (`bun.lock` present).
+Use `bunx` instead of `npx`.
 
 ```bash
-npx expo install <package>  # ALWAYS use instead of npm/yarn/pnpm/bun add — resolves SDK-compatible versions
-npx expo start              # start the dev server
-npx expo lint               # lint
-npx tsc --noEmit            # typecheck
-npx expo-doctor             # diagnose dependency and config issues
-npx expo install --fix      # fix incompatible package versions
+bunx expo install <package>  # ALWAYS use instead of npm/yarn/pnpm/bun add — resolves SDK-compatible versions
+bunx expo start              # start the dev server
+bunx expo lint               # lint
+bunx tsc --noEmit            # typecheck
+bunx expo-doctor             # diagnose dependency and config issues
+bunx expo install --fix      # fix incompatible package versions
 ```
 
 Run lint and typecheck before declaring any task done.
@@ -31,7 +31,7 @@ Run lint and typecheck before declaring any task done.
 
 ## Building with EAS
 
-Use EAS to build, sign, and submit the app in the cloud (`eas build`, `eas submit`) and to ship over-the-air updates (`eas update`) — no local Xcode or Android Studio required. Run EAS CLI as `bunx eas-cli <command>` in Bun projects, or `npx eas-cli@latest <command>` otherwise; substitute that for bare `eas` in docs examples.
+Use EAS to build, sign, and submit the app in the cloud (`eas build`, `eas submit`) and to ship over-the-air updates (`eas update`) — no local Xcode or Android Studio required. Run EAS CLI as `bunx eas-cli <command>`; substitute that for bare `eas` in docs examples.
 Docs: https://docs.expo.dev/eas/index.md
 
 ## Rules
