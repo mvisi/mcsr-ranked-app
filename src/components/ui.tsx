@@ -398,8 +398,10 @@ export function PlayerRow({
       className="min-h-16 flex-row items-center gap-3 border-b border-zinc-800 px-4 py-3 active:bg-ranked-surface"
     >
       <Txt
+        numberOfLines={1}
+        adjustsFontSizeToFit
         className={twMerge(
-          'w-8 text-right text-sm text-zinc-500',
+          'w-8 shrink-0 text-right text-sm text-zinc-500',
           position === 1 && 'text-yellow-300',
           position === 2 && 'text-zinc-200',
           position === 3 && 'text-orange-300',
