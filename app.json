@@ -18,7 +18,7 @@
         "foregroundImage": "./assets/images/ranked-android-foreground.png",
         "backgroundColor": "#18181b"
       },
-      "predictiveBackGestureEnabled": true
+      "predictiveBackGestureEnabled": false
     },
     "web": {
       "bundler": "metro",
