@@ -46,6 +46,7 @@
     "start": "expo start",
     "android": "expo start --android",
     "web": "expo start --web",
+    "build": "bun run build --profile preview --platform android",
     "typecheck": "tsc --noEmit",
     "lint": "expo lint",
     "format": "prettier --write .",
