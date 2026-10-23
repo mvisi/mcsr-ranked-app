@@ -79,7 +79,7 @@ export default function StatsScreen() {
     board === 'elo'
       ? (elo.data?.users ?? []).map((player) => ({
           key: player.uuid,
-          player,
+          player: { ...player, eloRate: player.seasonResult.eloRate },
           position: player.seasonResult.eloRank,
           value: String(player.seasonResult.eloRate),
         }))
