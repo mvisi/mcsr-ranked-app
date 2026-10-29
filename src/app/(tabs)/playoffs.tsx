@@ -150,7 +150,7 @@ export default function PlayoffsScreen() {
           <Txt accessibilityRole="header" className="text-xl">
             Playoffs
           </Txt>
-          <View className="-mr-3 flex-row">
+          <View className="-my-3 -mr-3 flex-row">
             <LinkIcon
               label="MCSR Ranked on YouTube"
               icon="logo-youtube"
