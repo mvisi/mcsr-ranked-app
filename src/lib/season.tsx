@@ -20,13 +20,17 @@ export function SeasonProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export function useSeason() {
-  const context = useContext(SeasonContext);
-  if (!context) throw new Error('SeasonProvider is required');
-  const current = useQuery({
+export function useCurrentLeaderboard() {
+  return useQuery({
     queryKey: ['leaderboard', 'current'],
     queryFn: () => ranked.leaderboards.elo(),
   });
+}
+
+export function useSeason() {
+  const context = useContext(SeasonContext);
+  if (!context) throw new Error('SeasonProvider is required');
+  const current = useCurrentLeaderboard();
   return {
     ...context,
     current,

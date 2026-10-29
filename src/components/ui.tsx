@@ -13,7 +13,9 @@ import {
   Keyboard,
   Linking,
   Modal,
+  Platform,
   Pressable,
+  Share,
   Text,
   TextInput,
   View,
@@ -88,17 +90,24 @@ export function IconButton({
   label,
   icon,
   onPress,
+  disabled,
 }: {
   label: string;
   icon: ComponentProps<typeof Ionicons>['name'];
   onPress: () => void;
+  disabled?: boolean;
 }) {
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={label}
+      accessibilityState={{ disabled }}
+      disabled={disabled}
       onPress={onPress}
-      className="h-12 w-12 items-center justify-center rounded-md border border-ranked-border bg-ranked-surface active:opacity-70"
+      className={twMerge(
+        'h-12 w-12 items-center justify-center rounded-md border border-ranked-border bg-ranked-surface active:opacity-70',
+        disabled && 'opacity-40',
+      )}
     >
       <Ionicons name={icon} size={22} color="#fafafa" />
     </Pressable>
@@ -472,5 +481,25 @@ export function ExternalButton({
         </Txt>
       )}
     </View>
+  );
+}
+
+export function ShareButton({ label, url }: { label: string; url: string }) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      onPress={() => {
+        void Share.share({ message: url }).catch(() => {});
+      }}
+      hitSlop={8}
+      className="h-10 w-10 items-center justify-center active:opacity-70"
+    >
+      <Ionicons
+        name={Platform.OS === 'ios' ? 'share-outline' : 'share-social-outline'}
+        size={22}
+        color="#fafafa"
+      />
+    </Pressable>
   );
 }

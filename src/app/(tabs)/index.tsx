@@ -116,6 +116,8 @@ export default function StatsScreen() {
         data={error && !active.data ? [] : rows}
         keyExtractor={(row) => row.key}
         keyboardShouldPersistTaps="handled"
+        // Lets player suggestions draw over the rows below the header.
+        ListHeaderComponentStyle={{ zIndex: 1 }}
         keyboardDismissMode="on-drag"
         refreshControl={
           <RefreshControl

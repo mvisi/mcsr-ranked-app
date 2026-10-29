@@ -2,7 +2,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
 import { Keyboard, Pressable, View } from 'react-native';
 
-import { Input } from '@/components/ui';
+import { PlayerInput } from '@/components/player-input';
 
 export function PlayerSearch({
   name,
@@ -11,27 +11,29 @@ export function PlayerSearch({
   name: string;
   onChangeName: (name: string) => void;
 }) {
-  const search = () => {
-    if (!name.trim()) return;
+  const open = (nickname: string) => {
+    if (!nickname) return;
     Keyboard.dismiss();
-    router.push({ pathname: '/player/[name]', params: { name: name.trim() } });
+    router.push({ pathname: '/player/[name]', params: { name: nickname } });
   };
   return (
-    <View className="flex-row gap-2">
-      <Input
+    // Lifts the suggestions above the rest of the header.
+    <View className="z-10 flex-row gap-2">
+      <PlayerInput
         accessibilityLabel="Player name"
         placeholder="Search for players"
         value={name}
         onChangeText={onChangeName}
-        onSubmitEditing={search}
+        onSelect={open}
+        onSubmitEditing={() => open(name.trim())}
         returnKeyType="search"
-        className="flex-1"
+        containerClassName="flex-1"
       />
       <Pressable
         accessibilityRole="button"
         accessibilityLabel="Search player"
         disabled={!name.trim()}
-        onPress={search}
+        onPress={() => open(name.trim())}
         className="h-12 w-12 items-center justify-center rounded-md border border-ranked-border bg-ranked-surface active:bg-zinc-700 disabled:opacity-40"
       >
         <Ionicons name="search" color="#a3d65c" size={22} />

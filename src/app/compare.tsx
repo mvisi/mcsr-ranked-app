@@ -15,12 +15,12 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { MatchRow, MatchesFooter } from '@/components/match-row';
+import { PlayerInput } from '@/components/player-input';
 import {
   Avatar,
   Button,
   Card,
   Heading,
-  Input,
   QueryState,
   RefreshWarning,
   Segments,
@@ -73,14 +73,15 @@ export default function CompareScreen() {
   const firstWins = result?.[players[0]?.uuid] ?? 0;
   const secondWins = result?.[players[1]?.uuid] ?? 0;
   const played = result?.total ?? 0;
-  const valid =
-    !!first.trim() &&
-    !!second.trim() &&
-    first.trim().toLowerCase() !== second.trim().toLowerCase();
-  const compare = () => {
-    if (!valid) return;
+  const isValid = (a: string, b: string) =>
+    !!a.trim() &&
+    !!b.trim() &&
+    a.trim().toLowerCase() !== b.trim().toLowerCase();
+  const valid = isValid(first, second);
+  const compare = (a: string, b: string) => {
+    if (!isValid(a, b)) return;
     Keyboard.dismiss();
-    setPair({ first: first.trim(), second: second.trim() });
+    setPair({ first: a.trim(), second: b.trim() });
   };
   const refresh = () => {
     void current.refetch();
@@ -136,6 +137,8 @@ export default function CompareScreen() {
           data={versus.data ? rows : []}
           keyExtractor={(match) => String(match.id)}
           keyboardShouldPersistTaps="handled"
+          // Lets player suggestions draw over the rows below the header.
+          ListHeaderComponentStyle={{ zIndex: 1 }}
           keyboardDismissMode="on-drag"
           refreshControl={
             <RefreshControl
@@ -157,27 +160,37 @@ export default function CompareScreen() {
           ListHeaderComponent={
             <View className="gap-4 p-4">
               <SeasonSelect />
-              <Input
+              <PlayerInput
                 accessibilityLabel="First player"
+                containerClassName="z-20"
                 placeholder="First player name"
                 value={first}
                 onChangeText={setFirst}
+                onSelect={(name) => {
+                  setFirst(name);
+                  secondInput.current?.focus();
+                }}
                 returnKeyType="next"
                 submitBehavior="submit"
                 onSubmitEditing={() => secondInput.current?.focus()}
               />
-              <Input
+              <PlayerInput
                 ref={secondInput}
                 accessibilityLabel="Second player"
+                containerClassName="z-10"
                 placeholder="Second player name"
                 value={second}
                 onChangeText={setSecond}
-                onSubmitEditing={compare}
+                onSelect={(name) => {
+                  setSecond(name);
+                  compare(first, name);
+                }}
+                onSubmitEditing={() => compare(first, second)}
                 returnKeyType="go"
               />
               <Button
                 title="Compare players"
-                onPress={compare}
+                onPress={() => compare(first, second)}
                 disabled={!valid}
               />
               {!!first.trim() &&

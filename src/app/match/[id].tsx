@@ -10,6 +10,7 @@ import {
   ExternalButton,
   Heading,
   QueryState,
+  ShareButton,
   Txt,
 } from '@/components/ui';
 import { ranked } from '@/lib/api';
@@ -35,6 +36,10 @@ export default function MatchScreen() {
   ]
     .filter(Boolean)
     .join(' · ');
+  // The website shows matches under a player's stats page.
+  const sharePlayer = (
+    data?.players.find((player) => player.uuid === viewer) ?? data?.players[0]
+  )?.nickname;
   const refresh = () => {
     void match.refetch();
   };
@@ -44,7 +49,18 @@ export default function MatchScreen() {
       edges={['bottom', 'left', 'right']}
       className="flex-1 bg-ranked-background"
     >
-      <Stack.Screen options={{ title: `Match #${id}` }} />
+      <Stack.Screen
+        options={{
+          title: `Match #${id}`,
+          headerRight: () =>
+            sharePlayer && (
+              <ShareButton
+                label="Share match"
+                url={`https://mcsrranked.com/stats/${encodeURIComponent(sharePlayer)}/${data!.id}`}
+              />
+            ),
+        }}
+      />
       <ScrollView
         contentContainerClassName="gap-4 p-4 pb-8"
         refreshControl={

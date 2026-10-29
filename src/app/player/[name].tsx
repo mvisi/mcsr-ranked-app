@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import type { MatchSort } from 'mcsrranked-sdk';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FlatList, Pressable, RefreshControl, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -14,12 +14,14 @@ import {
   QueryState,
   RefreshWarning,
   Select,
+  ShareButton,
   Stat,
   Txt,
 } from '@/components/ui';
 import { EloChart } from '@/components/elo-chart';
 import { MatchRow, MatchesFooter } from '@/components/match-row';
 import { useMatches } from '@/lib/matches';
+import { addRecentPlayer } from '@/lib/recent-players';
 import { ranked } from '@/lib/api';
 import { duration, flag, percentage, rankTier } from '@/lib/format';
 import { SeasonSelect, useSeason } from '@/lib/season';
@@ -45,6 +47,9 @@ export default function PlayerScreen() {
     enabled: !!name && season != null,
   });
   const user = player.data;
+  useEffect(() => {
+    if (user) addRecentPlayer(user);
+  }, [user]);
   const stats = user?.statistics.season;
   const total = user?.statistics.total;
   const displayElo =
@@ -66,7 +71,17 @@ export default function PlayerScreen() {
       edges={['bottom', 'left', 'right']}
       className="flex-1 bg-ranked-background"
     >
-      <Stack.Screen options={{ title: user?.nickname ?? name ?? 'Player' }} />
+      <Stack.Screen
+        options={{
+          title: user?.nickname ?? name ?? 'Player',
+          headerRight: () => (
+            <ShareButton
+              label="Share player"
+              url={`https://mcsrranked.com/stats/${encodeURIComponent(user?.nickname ?? name)}`}
+            />
+          ),
+        }}
+      />
       <FlatList
         data={user ? rows : []}
         keyExtractor={(match) => String(match.id)}

@@ -1,9 +1,10 @@
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { useQuery } from '@tanstack/react-query';
 import * as Clipboard from 'expo-clipboard';
 import { router } from 'expo-router';
 import type { WeeklyRace } from 'mcsrranked-sdk';
 import { useState } from 'react';
-import { FlatList, RefreshControl, View } from 'react-native';
+import { FlatList, Pressable, RefreshControl, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Sheet } from '@/components/sheet';
@@ -12,6 +13,7 @@ import {
   Button,
   Card,
   Heading,
+  IconButton,
   Input,
   PlayerRow,
   QueryState,
@@ -88,51 +90,47 @@ export default function WeeklyRaceScreen() {
             <Txt accessibilityRole="header" className="text-xl">
               Weekly race
             </Txt>
-            <Select
-              title="Race week"
-              value={week == null ? 'current' : String(week)}
-              onChange={changeWeek}
-              options={[
-                {
-                  label: current.data
-                    ? `Week ${current.data.id} · Current`
-                    : 'Current week',
-                  value: 'current',
-                },
-                ...Array.from(
-                  { length: Math.max(0, (current.data?.id ?? 1) - 1) },
-                  (_, index) => ({
-                    label: `Week ${current.data!.id - index - 1}`,
-                    value: String(current.data!.id - index - 1),
-                  }),
-                ),
-              ]}
-            />
-            <View className="flex-row gap-2">
+            <View className="flex-row items-center gap-2">
+              <IconButton
+                label="Previous week"
+                icon="chevron-back"
+                disabled={!data || data.id <= 1}
+                onPress={() => changeWeek(String(data!.id - 1))}
+              />
               <View className="flex-1">
-                <Button
-                  secondary
-                  title="Previous week"
-                  disabled={!data || data.id <= 1}
-                  onPress={() => changeWeek(String(data!.id - 1))}
+                <Select
+                  title="Race week"
+                  value={week == null ? 'current' : String(week)}
+                  onChange={changeWeek}
+                  options={[
+                    {
+                      label: current.data
+                        ? `Week ${current.data.id} · Current`
+                        : 'Current week',
+                      value: 'current',
+                    },
+                    ...Array.from(
+                      { length: Math.max(0, (current.data?.id ?? 1) - 1) },
+                      (_, index) => ({
+                        label: `Week ${current.data!.id - index - 1}`,
+                        value: String(current.data!.id - index - 1),
+                      }),
+                    ),
+                  ]}
                 />
               </View>
-              <View className="flex-1">
-                <Button
-                  secondary
-                  title="Next week"
-                  disabled={
-                    !data || !current.data || data.id >= current.data.id
-                  }
-                  onPress={() =>
-                    changeWeek(
-                      data!.id + 1 === current.data!.id
-                        ? 'current'
-                        : String(data!.id + 1),
-                    )
-                  }
-                />
-              </View>
+              <IconButton
+                label="Next week"
+                icon="chevron-forward"
+                disabled={!data || !current.data || data.id >= current.data.id}
+                onPress={() =>
+                  changeWeek(
+                    data!.id + 1 === current.data!.id
+                      ? 'current'
+                      : String(data!.id + 1),
+                  )
+                }
+              />
             </View>
             {data && (
               <Txt className="text-xs text-ranked-muted">
@@ -157,30 +155,35 @@ export default function WeeklyRaceScreen() {
               <Card className="gap-4">
                 <Heading>Race seed</Heading>
                 {(['overworld', 'nether', 'theEnd', 'rng'] as const).map(
-                  (key) => (
-                    <View key={key} className="gap-2">
-                      <Txt className="text-xs uppercase text-ranked-muted">
-                        {key === 'theEnd' ? 'The End' : key}
-                      </Txt>
-                      <Txt selectable className="text-sm">
-                        {data.seed[key]}
-                      </Txt>
-                      <Button
-                        secondary
-                        title={
-                          copied === `${data.id}:${key}`
-                            ? 'Copied'
-                            : 'Copy seed'
-                        }
+                  (key) => {
+                    const done = copied === `${data.id}:${key}`;
+                    return (
+                      <Pressable
+                        key={key}
+                        accessibilityRole="button"
+                        accessibilityLabel={`${done ? 'Copied' : 'Copy'} ${key === 'theEnd' ? 'The End' : key} seed`}
                         onPress={() => {
                           setCopyFailed(false);
                           void Clipboard.setStringAsync(data.seed[key])
                             .then(() => setCopied(`${data.id}:${key}`))
                             .catch(() => setCopyFailed(true));
                         }}
-                      />
-                    </View>
-                  ),
+                        className="flex-row items-center gap-3 rounded-md active:opacity-70"
+                      >
+                        <View className="flex-1 gap-2">
+                          <Txt className="text-xs uppercase text-ranked-muted">
+                            {key === 'theEnd' ? 'The End' : key}
+                          </Txt>
+                          <Txt className="text-sm">{data.seed[key]}</Txt>
+                        </View>
+                        <Ionicons
+                          name={done ? 'checkmark' : 'copy-outline'}
+                          size={20}
+                          color={done ? '#a3d65c' : '#a1a1aa'}
+                        />
+                      </Pressable>
+                    );
+                  },
                 )}
                 {copyFailed && (
                   <Txt className="text-xs text-red-300">
