@@ -8,7 +8,7 @@ Designed to match the website as close as possible.
 
 Currently, only Android is explicitly supported. You can find the latest APK in the release page.
 
-With the help of testers and IOS developers, hopefully IOS support is added in the future.
+With the help of testers and IOS developers, hopefully IOS support is added in the future. However, since this project is in react native, if you have an ios device, or a mac, you can build it yourself.
 
 ## Run locally
 
