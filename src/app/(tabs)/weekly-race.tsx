@@ -3,16 +3,10 @@ import * as Clipboard from 'expo-clipboard';
 import { router } from 'expo-router';
 import type { WeeklyRace } from 'mcsrranked-sdk';
 import { useState } from 'react';
-import {
-  FlatList,
-  Modal,
-  Pressable,
-  RefreshControl,
-  ScrollView,
-  View,
-} from 'react-native';
+import { FlatList, RefreshControl, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { Sheet } from '@/components/sheet';
 import {
   Avatar,
   Button,
@@ -214,64 +208,50 @@ export default function WeeklyRaceScreen() {
         }
         ListFooterComponent={<View className="h-8" />}
       />
-      <Modal
-        transparent
-        visible={!!selected}
-        animationType="slide"
-        onRequestClose={() => setSelected(undefined)}
+      <Sheet
+        visible={!!selected && !!data}
+        label="Close race result"
+        onClose={() => setSelected(undefined)}
       >
-        <View className="flex-1 justify-end bg-black/70">
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Close race result"
-            onPress={() => setSelected(undefined)}
-            className="flex-1"
-          />
-          <SafeAreaView
-            edges={['bottom', 'left', 'right']}
-            className="max-h-[80%] rounded-t-xl border border-ranked-border bg-ranked-background"
-          >
-            {selected && data && (
-              <ScrollView contentContainerClassName="gap-5 p-5">
-                <View className="flex-row items-center gap-4">
-                  <Avatar uuid={selected.player.uuid} size={48} />
-                  <View className="flex-1 gap-2">
-                    <Txt className="text-xl">{selected.player.nickname}</Txt>
-                    <Txt className="text-sm text-ranked-muted">
-                      Week {data.id} · Rank #{selected.rank}
-                    </Txt>
-                  </View>
-                </View>
-                <View className="flex-row gap-4">
-                  <Stat
-                    title="Completion time"
-                    value={duration(selected.time, true)}
-                  />
-                  <Stat
-                    title="Behind first place"
-                    value={`+${duration(Math.max(0, selected.time - (data.leaderboard[0]?.time ?? selected.time)), true)}`}
-                  />
-                </View>
-                <Button
-                  title="View player stats"
-                  onPress={() => {
-                    setSelected(undefined);
-                    router.push({
-                      pathname: '/player/[name]',
-                      params: { name: selected.player.nickname },
-                    });
-                  }}
-                />
-                <Button
-                  title="Close"
-                  secondary
-                  onPress={() => setSelected(undefined)}
-                />
-              </ScrollView>
-            )}
-          </SafeAreaView>
-        </View>
-      </Modal>
+        {selected && data && (
+          <>
+            <View className="flex-row items-center gap-4">
+              <Avatar uuid={selected.player.uuid} size={48} />
+              <View className="flex-1 gap-2">
+                <Txt className="text-xl">{selected.player.nickname}</Txt>
+                <Txt className="text-sm text-ranked-muted">
+                  Week {data.id} · Rank #{selected.rank}
+                </Txt>
+              </View>
+            </View>
+            <View className="flex-row gap-4">
+              <Stat
+                title="Completion time"
+                value={duration(selected.time, true)}
+              />
+              <Stat
+                title="Behind first place"
+                value={`+${duration(Math.max(0, selected.time - (data.leaderboard[0]?.time ?? selected.time)), true)}`}
+              />
+            </View>
+            <Button
+              title="View player stats"
+              onPress={() => {
+                setSelected(undefined);
+                router.push({
+                  pathname: '/player/[name]',
+                  params: { name: selected.player.nickname },
+                });
+              }}
+            />
+            <Button
+              title="Close"
+              secondary
+              onPress={() => setSelected(undefined)}
+            />
+          </>
+        )}
+      </Sheet>
     </SafeAreaView>
   );
 }

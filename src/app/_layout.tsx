@@ -7,6 +7,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { AppState, Platform } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { queryClient } from '@/lib/query';
@@ -37,24 +38,26 @@ export default function RootLayout() {
   if (!loaded && !error) return null;
 
   return (
-    <SafeAreaProvider>
-      <QueryClientProvider client={queryClient}>
-        <SeasonProvider>
-          <ThemeProvider value={DarkTheme}>
-            <StatusBar style="light" />
-            <Stack
-              screenOptions={{
-                headerStyle: { backgroundColor: '#27272a' },
-                headerTintColor: '#fafafa',
-                headerTitleStyle: { fontFamily: 'Minecraft' },
-                contentStyle: { backgroundColor: '#18181b' },
-              }}
-            >
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            </Stack>
-          </ThemeProvider>
-        </SeasonProvider>
-      </QueryClientProvider>
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <QueryClientProvider client={queryClient}>
+          <SeasonProvider>
+            <ThemeProvider value={DarkTheme}>
+              <StatusBar style="light" />
+              <Stack
+                screenOptions={{
+                  headerStyle: { backgroundColor: '#27272a' },
+                  headerTintColor: '#fafafa',
+                  headerTitleStyle: { fontFamily: 'Minecraft' },
+                  contentStyle: { backgroundColor: '#18181b' },
+                }}
+              >
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              </Stack>
+            </ThemeProvider>
+          </SeasonProvider>
+        </QueryClientProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }
