@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { FlatList, RefreshControl, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -38,7 +38,8 @@ export default function StatsScreen() {
   const now = useClock();
   const { season, current } = useSeason();
   const [board, setBoard] = useState<Board>('elo');
-  const [searchName, setSearchName] = useState('');
+  const [searching, setSearching] = useState(false);
+  const closeSearch = useCallback(() => setSearching(false), []);
   const [country, setCountry] = useState('world');
   const [allTime, setAllTime] = useState(false);
   const [distinct, setDistinct] = useState(true);
@@ -110,141 +111,150 @@ export default function StatsScreen() {
       edges={['top', 'left', 'right']}
       className="flex-1 bg-ranked-background"
     >
-      <FlatList
-        // Restart row batching instead of reusing the previous board's render window.
-        key={board}
-        data={error && !active.data ? [] : rows}
-        keyExtractor={(row) => row.key}
-        keyboardShouldPersistTaps="handled"
-        // Lets player suggestions draw over the rows below the header.
-        ListHeaderComponentStyle={{ zIndex: 1 }}
-        keyboardDismissMode="on-drag"
-        refreshControl={
-          <RefreshControl
-            refreshing={active.isRefetching || current.isRefetching}
-            onRefresh={refresh}
-            tintColor="#a3d65c"
-            colors={['#70a822']}
-          />
-        }
-        ListHeaderComponent={
-          <View className="gap-4 p-4 pb-2">
-            <SeasonSelect />
-            <Txt className="text-xs text-ranked-muted">
-              {endsAt != null && endsAt * 1000 <= now ? 'Ended' : 'Ends'}{' '}
-              {dateTime(endsAt)}
-            </Txt>
-            <PlayerSearch name={searchName} onChangeName={setSearchName} />
-            <View className="flex-row items-center gap-2">
-              <View className="flex-1">
-                <Segments
-                  value={board}
-                  onChange={setBoard}
-                  options={[
-                    { label: 'Elo', value: 'elo' },
-                    { label: 'Times', value: 'records' },
-                    { label: 'Points', value: 'points' },
-                  ]}
-                />
-              </View>
-              <IconButton
-                label="Compare players"
-                icon="git-compare-outline"
-                onPress={() => router.push('/compare')}
-              />
-            </View>
-            {board === 'records' ? (
+      <View className="flex-1">
+        <FlatList
+          // Restart row batching instead of reusing the previous board's render window.
+          key={board}
+          data={error && !active.data ? [] : rows}
+          keyExtractor={(row) => row.key}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+          refreshControl={
+            <RefreshControl
+              refreshing={active.isRefetching || current.isRefetching}
+              onRefresh={refresh}
+              tintColor="#a3d65c"
+              colors={['#70a822']}
+            />
+          }
+          ListHeaderComponent={
+            <View className="gap-4 p-4 pb-2">
               <View className="flex-row gap-2">
                 <View className="flex-1">
-                  <Segments
-                    value={allTime ? 'all' : 'season'}
-                    onChange={(value) => setAllTime(value === 'all')}
-                    options={[
-                      { label: 'Season', value: 'season' },
-                      { label: 'All time', value: 'all' },
-                    ]}
-                  />
+                  <SeasonSelect />
                 </View>
+                <IconButton
+                  label="Search players"
+                  icon="search"
+                  onPress={() => setSearching(true)}
+                />
+              </View>
+              <Txt className="text-xs text-ranked-muted">
+                {endsAt != null && endsAt * 1000 <= now ? 'Ended' : 'Ends'}{' '}
+                {dateTime(endsAt)}
+              </Txt>
+              <View className="flex-row items-center gap-2">
                 <View className="flex-1">
                   <Segments
-                    value={distinct ? 'unique' : 'all'}
-                    onChange={(value) => setDistinct(value === 'unique')}
+                    value={board}
+                    onChange={setBoard}
                     options={[
-                      { label: 'Unique', value: 'unique' },
-                      { label: 'All runs', value: 'all' },
+                      { label: 'Elo', value: 'elo' },
+                      { label: 'Times', value: 'records' },
+                      { label: 'Points', value: 'points' },
                     ]}
                   />
                 </View>
-              </View>
-            ) : (
-              <Select
-                title="Country"
-                value={country}
-                onChange={setCountry}
-                options={countryOptions}
-              />
-            )}
-            {board === 'points' && (
-              <View className="gap-2">
-                <Segments
-                  value={predicted ? 'predicted' : 'earned'}
-                  onChange={(value) => setPredicted(value === 'predicted')}
-                  options={[
-                    { label: 'Earned points', value: 'earned' },
-                    { label: 'Predicted points', value: 'predicted' },
-                  ]}
+                <IconButton
+                  label="Compare players"
+                  icon="git-compare-outline"
+                  onPress={() => router.push('/compare')}
                 />
-                <Txt className="text-xs text-ranked-muted">
-                  Phase {points.data?.phase.number ?? '–'} · Ends{' '}
-                  {dateTime(points.data?.phase.endsAt)}
+              </View>
+              {board === 'records' ? (
+                <View className="flex-row gap-2">
+                  <View className="flex-1">
+                    <Segments
+                      value={allTime ? 'all' : 'season'}
+                      onChange={(value) => setAllTime(value === 'all')}
+                      options={[
+                        { label: 'Season', value: 'season' },
+                        { label: 'All time', value: 'all' },
+                      ]}
+                    />
+                  </View>
+                  <View className="flex-1">
+                    <Segments
+                      value={distinct ? 'unique' : 'all'}
+                      onChange={(value) => setDistinct(value === 'unique')}
+                      options={[
+                        { label: 'Unique', value: 'unique' },
+                        { label: 'All runs', value: 'all' },
+                      ]}
+                    />
+                  </View>
+                </View>
+              ) : (
+                <Select
+                  title="Country"
+                  value={country}
+                  onChange={setCountry}
+                  options={countryOptions}
+                />
+              )}
+              {board === 'points' && (
+                <View className="gap-2">
+                  <Segments
+                    value={predicted ? 'predicted' : 'earned'}
+                    onChange={(value) => setPredicted(value === 'predicted')}
+                    options={[
+                      { label: 'Earned points', value: 'earned' },
+                      { label: 'Predicted points', value: 'predicted' },
+                    ]}
+                  />
+                  <Txt className="text-xs text-ranked-muted">
+                    Phase {points.data?.phase.number ?? '–'} · Ends{' '}
+                    {dateTime(points.data?.phase.endsAt)}
+                  </Txt>
+                </View>
+              )}
+              <View className="flex-row justify-between border-b border-ranked-border pb-2 pt-2">
+                <Txt className="text-xs uppercase tracking-widest text-ranked-muted">
+                  {board === 'records' ? 'Fastest completions' : 'Leaderboard'}
+                </Txt>
+                <Txt className="text-xs text-zinc-500">
+                  {rows.length} {board === 'records' ? 'runs' : 'players'}
                 </Txt>
               </View>
-            )}
-            <View className="flex-row justify-between border-b border-ranked-border pb-2 pt-2">
-              <Txt className="text-xs uppercase tracking-widest text-ranked-muted">
-                {board === 'records' ? 'Fastest completions' : 'Leaderboard'}
-              </Txt>
-              <Txt className="text-xs text-zinc-500">
-                {rows.length} {board === 'records' ? 'runs' : 'players'}
-              </Txt>
             </View>
-          </View>
-        }
-        ListEmptyComponent={
-          <QueryState
-            pending={!error && (current.isPending || active.isPending)}
-            error={error}
-            retry={refresh}
-            empty={
-              !active.isPending && !error
-                ? 'No results for this season and country.'
-                : undefined
-            }
-          />
-        }
-        ListFooterComponent={<View className="h-8" />}
-        renderItem={({ item }) => (
-          <PlayerRow
-            player={item.player}
-            position={item.position}
-            value={item.value}
-            detail={item.detail}
-            onPress={() =>
-              router.push(
-                item.matchId
-                  ? {
-                      pathname: '/match/[id]',
-                      params: { id: item.matchId, viewer: item.player.uuid },
-                    }
-                  : {
-                      pathname: '/player/[name]',
-                      params: { name: item.player.nickname },
-                    },
-              )
-            }
-          />
-        )}
-      />
+          }
+          ListEmptyComponent={
+            <QueryState
+              pending={!error && (current.isPending || active.isPending)}
+              error={error}
+              retry={refresh}
+              empty={
+                !active.isPending && !error
+                  ? 'No results for this season and country.'
+                  : undefined
+              }
+            />
+          }
+          ListFooterComponent={<View className="h-8" />}
+          renderItem={({ item }) => (
+            <PlayerRow
+              player={item.player}
+              position={item.position}
+              value={item.value}
+              detail={item.detail}
+              onPress={() =>
+                router.push(
+                  item.matchId
+                    ? {
+                        pathname: '/match/[id]',
+                        params: { id: item.matchId, viewer: item.player.uuid },
+                      }
+                    : {
+                        pathname: '/player/[name]',
+                        params: { name: item.player.nickname },
+                      },
+                )
+              }
+            />
+          )}
+        />
+        {searching && <PlayerSearch onClose={closeSearch} />}
+      </View>
     </SafeAreaView>
   );
 }
